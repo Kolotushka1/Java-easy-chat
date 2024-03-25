@@ -9,6 +9,8 @@ public class ChatServer {
     private static Set<String> userNames = new HashSet<>();
     private static Set<PrintWriter> writers = new HashSet<>();
 
+    private static LinkedList<String> messageHistory = new LinkedList<>();
+
     public static void main(String[] args) throws Exception {
         System.out.println("Chat Server is running on port " + PORT);
         ServerSocket listener = new ServerSocket(PORT);
@@ -51,11 +53,25 @@ public class ChatServer {
                 out.println("NAMEACCEPTED");
                 writers.add(out);
 
+                synchronized (messageHistory) {
+                    for (String message : messageHistory) {
+                        out.println(message);
+                    }
+                }
+
                 while (true) {
                     String input = in.nextLine();
                     if (input == null) {
                         return;
                     }
+
+                    synchronized (messageHistory) {
+                        if (messageHistory.size() == 50) {
+                            messageHistory.removeFirst();
+                        }
+                        messageHistory.addLast("MESSAGE " + name + ": " + input);
+                    }
+
                     for (PrintWriter writer : writers) {
                         writer.println("MESSAGE " + name + ": " + input);
                     }
