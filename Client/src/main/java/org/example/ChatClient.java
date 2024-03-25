@@ -6,8 +6,8 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class ChatClient {
-    private static String SERVER_ADDRESS = "127.0.0.1";
-    private static int SERVER_PORT = 12345;
+    private static String SERVER_ADDRESS;
+    private static int SERVER_PORT;
 
     public static void main(String[] args) throws Exception {
         loadConfiguration();

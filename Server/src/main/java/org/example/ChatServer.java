@@ -5,13 +5,15 @@ import java.net.*;
 import java.util.*;
 
 public class ChatServer {
-    private static final int PORT = 12345;
+    private static int PORT;
     private static Set<String> userNames = new HashSet<>();
     private static Set<PrintWriter> writers = new HashSet<>();
 
     private static LinkedList<String> messageHistory = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
+        loadConfiguration();
+
         System.out.println("Chat Server is running on port " + PORT);
         ServerSocket listener = new ServerSocket(PORT);
 
@@ -88,6 +90,28 @@ public class ChatServer {
                 try {
                     socket.close();
                 } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    private static void loadConfiguration() {
+        Properties prop = new Properties();
+        InputStream input = null;
+
+        try {
+            input = new FileInputStream("src/config.properties");
+            prop.load(input);
+
+            PORT = Integer.parseInt(prop.getProperty("server.port"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
