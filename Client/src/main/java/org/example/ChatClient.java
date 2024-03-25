@@ -2,13 +2,16 @@ package org.example;
 
 import java.io.*;
 import java.net.*;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class ChatClient {
-    private static final String SERVER_ADDRESS = "127.0.0.1";
-    private static final int SERVER_PORT = 12345;
+    private static String SERVER_ADDRESS = "127.0.0.1";
+    private static int SERVER_PORT = 12345;
 
     public static void main(String[] args) throws Exception {
+        loadConfiguration();
+
         Scanner scanner = new Scanner(System.in);
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 
@@ -40,6 +43,29 @@ public class ChatClient {
         } finally {
             socket.close();
             System.out.println("Disconnected from chat server");
+        }
+    }
+
+    private static void loadConfiguration() {
+        Properties prop = new Properties();
+        InputStream input = null;
+
+        try {
+            input = new FileInputStream("src/config.properties");
+            prop.load(input);
+
+            SERVER_ADDRESS = prop.getProperty("server.address");
+            SERVER_PORT = Integer.parseInt(prop.getProperty("server.port"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
