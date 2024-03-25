@@ -96,24 +96,16 @@ public class ChatServer {
     }
 
     private static void loadConfiguration() {
-        Properties prop = new Properties();
-        InputStream input = null;
-
-        try {
-            input = new FileInputStream("src/config.properties");
+        try (InputStream input = ChatServer.class.getClassLoader().getResourceAsStream("config.properties")) {
+            Properties prop = new Properties();
+            if (input == null) {
+                System.out.println("Sorry, unable to find config.properties");
+                return;
+            }
             prop.load(input);
-
             PORT = Integer.parseInt(prop.getProperty("server.port"));
         } catch (IOException ex) {
             ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }
