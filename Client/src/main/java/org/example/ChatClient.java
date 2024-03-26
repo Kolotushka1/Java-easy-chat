@@ -11,7 +11,6 @@ public class ChatClient {
 
     public static void main(String[] args) throws Exception {
         loadConfiguration();
-
         Scanner scanner = new Scanner(System.in);
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 
@@ -51,7 +50,13 @@ public class ChatClient {
         InputStream input = null;
 
         try {
-            input = new FileInputStream("src/config.properties");
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            input = classLoader.getResourceAsStream("config.properties");
+            if (input == null) {
+                System.err.println("Unable to find config.properties");
+                return;
+            }
+
             prop.load(input);
 
             SERVER_ADDRESS = prop.getProperty("server.address");
